@@ -24,9 +24,15 @@ def test_register_duplicate_rejected(client):
 
 
 def test_register_validates_email_and_password(client):
-    r = client.post("/register", json={"email": "nope", "password": "StrongPassword123!"})
+    r = client.post(
+        "/register",
+        json={"email": "nope", "password": "StrongPassword123!"},
+    )
     assert r.status_code == 400
-    r = client.post("/register", json={"email": "a@b.co", "password": "short"})
+    r = client.post(
+        "/register",
+        json={"email": "a@b.co", "password": "short"},
+    )
     assert r.status_code == 400
 
 
@@ -49,7 +55,8 @@ def test_login_invalid_password_fails_safely(client):
         json={"email": "alice@example.com", "password": "StrongPassword123!"},
     )
     r = client.post(
-        "/login", json={"email": "alice@example.com", "password": "WrongPassword!"}
+        "/login",
+        json={"email": "alice@example.com", "password": "WrongPassword!"},
     )
     assert r.status_code == 401
     assert r.get_json()["error"] == "Invalid credentials"
@@ -57,13 +64,18 @@ def test_login_invalid_password_fails_safely(client):
 
 def test_login_unknown_user_returns_same_error(client):
     r = client.post(
-        "/login", json={"email": "nobody@example.com", "password": "WhatEver123!"}
+        "/login",
+        json={"email": "nobody@example.com", "password": "WhatEver123!"},
     )
     assert r.status_code == 401
     assert r.get_json()["error"] == "Invalid credentials"
 
 
 def test_missing_json_returns_400(client):
-    r = client.post("/register", data="not-json", content_type="application/json")
+    r = client.post(
+        "/register",
+        data="not-json",
+        content_type="application/json",
+    )
     assert r.status_code == 400
     assert "error" in r.get_json()
